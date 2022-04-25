@@ -112,3 +112,51 @@ sudo terraform apply
 
 Go to your AWS console to varify the result
 ![](terraform-pub-subnets.jpg)
+
+So values were hard-coded, this will present problems moving forward, let is refactor the codes
+
+### FIXING THE PROBLEMS BY CODE REFACTORING ###
+
+Let us declare these variable as used in our IaC
+
+~~~
+ variable "region" {
+        default = "us-east-1"
+ }
+
+ }
+ variable "region" {
+        default = "us-east-1"
+}
+variable "vpc_cidr" {
+        default = "172.16.0.0/16"
+}
+
+variable "enable_dns_support" {
+        default = "true"
+}
+
+variable "enable_dns_hostnames" {
+        default ="true" 
+}
+
+variable "enable_classiclink" {
+        default = "false"
+}
+
+variable "enable_classiclink_dns_support" {
+        default = "false"
+}
+
+provider "aws" {
+    region = var.region
+}
+
+# Create VPC
+resource "aws_vpc" "main" {
+    cidr_block                     = var.vpc_cidr
+    enable_dns_support             = var.enable_dns_support 
+    enable_dns_hostnames           = var.enable_dns_support
+    enable_classiclink             = var.enable_classiclink
+    enable_classiclink_dns_support = var.enable_classiclink
+~~~
