@@ -181,3 +181,15 @@ To make use of this new data resource, we will need to introduce a count argumen
 
     }
 ~~~
+- The count tells us that we need 2 subnets. Therefore, Terraform will invoke a loop to create 2 subnets.
+- The data resource will return a list object that contains a list of AZs. Internally, Terraform will receive the data like this
+~~~
+["us-east-1a", "us-east-1b"]
+~~~
+Each of them is an index, the first one is index 0, while the other is index 1. If the data returned had more than 2 records, then the index numbers would continue to increment.
+
+Therefore, each time Terraform goes into a loop to create a subnet, it must be created in the retrieved AZ from the list. Each loop will need the index number to determine what AZ the subnet will be created. That is why we have data.aws_availability_zones.available.names[count.index] as the value for availability_zone. When the first loop runs, the first index will be 0, therefore the AZ will be eu-central-1a. The pattern will repeat for the second loop.
+
+But we still have a problem. If we run Terraform with this configuration, it may succeed for the first time, but by the time it goes into the second loop, it will fail because we still have cidr_block hard coded. The same cidr_block cannot be created twice within the same VPC. So, we have a little more work to do.
+
+
