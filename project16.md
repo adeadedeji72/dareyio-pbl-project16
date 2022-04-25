@@ -160,3 +160,11 @@ resource "aws_vpc" "main" {
     enable_classiclink             = var.enable_classiclink
     enable_classiclink_dns_support = var.enable_classiclink
 ~~~
+Terraform uses **Data Source** to pull data from providers, here we will use data source to pull a list of availability zones from a specific AWS region
+
+~~~
+  # Get list of availability zones
+data "aws_availability_zones" "available" {
+state = "available"
+}
+~~~
