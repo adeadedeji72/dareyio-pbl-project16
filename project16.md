@@ -226,3 +226,45 @@ We can test this on terraform console thus:
  
 See result below:
 ![](terraform-cidr-subnet.jpg)
+
+## Remove hard coded count values ##
+We can use *length* to count the number elements of a string, map or list. Thus we can know the number of AZs in a region
+~~~
+lenth(data.aws_availability_zones.available.names)
+~~~
+will produce the number of AZs 
+
+We can now have:
+~~~
+# Create public subnet1
+resource "aws_subnet" "public" { 
+    count                   = length(data.aws_availability_zones.available.names)
+    vpc_id                  = aws_vpc.PRJ16-vpc.id
+    cidr_block              = cidrsubnet(var.vpc_cidr, 8 , count.index)
+    map_public_ip_on_launch = true
+    availability_zone       = data.aws_availability_zones.available.names[count.index]
+
+}
+~~~
+If there are more than 2 AZs in this zone, our IaC will create more than 2 subnets which is not meeting out business requirement.
+
+**Now, let us fix this.**
+
+Declare a variable to store the desired number of public subnets, and set the default value
+~~~
+variable "preferred_number_of_public_subnets" {
+  default = 2
+}
+~~~
+Next, update the count argument with a condition. Terraform needs to check first if there is a desired number of subnets. Otherwise, use the data returned by the length function. See how that is presented below.
+~~~
+# Create public subnets
+resource "aws_subnet" "public" {
+  count  = var.preferred_number_of_public_subnets == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_public_subnets   
+  vpc_id = aws_vpc.PRJ16-vpc.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8 , count.index)
+  map_public_ip_on_launch = true
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+
+}
+~~~
