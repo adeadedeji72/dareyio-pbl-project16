@@ -168,3 +168,16 @@ data "aws_availability_zones" "available" {
 state = "available"
 }
 ~~~
+
+To make use of this new data resource, we will need to introduce a count argument in the subnet block: Something like this.
+~~~
+  # Create public subnet1
+  resource "aws_subnet" "public" { 
+      count                   = 2
+      vpc_id                  = aws_vpc.PRJ16-vpc.id
+      cidr_block              = "172.16.1.0/24"
+      map_public_ip_on_launch = true
+      availability_zone       = data.aws_availability_zones.available.names[count.index]
+
+    }
+~~~
