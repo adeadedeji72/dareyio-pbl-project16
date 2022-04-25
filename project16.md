@@ -99,3 +99,16 @@ Add below to the main.tf file
     availability_zone          = "us-east-1b"
 }
 ~~~
+The *vpc_id* tells Terraform which VPC to create the subnets
+
+Then run terraform plan and terraform apply 
+~~~
+sudo terraform plan
+~~~
+When satisfied 
+~~~
+sudo terraform apply
+~~~
+
+Go to your AWS console to varify the result
+![](terraform-pub-subnets.jpg)
