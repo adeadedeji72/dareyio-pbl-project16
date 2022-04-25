@@ -333,3 +333,19 @@ resource "aws_subnet" "public" {
 
 }
 ~~~
+
+### Introducing variables.tf & terraform.tfvars ###
+
+Instead of havng a long lisf of variables in main.tf file, we can actually make our code a lot more readable and better structured by moving out some parts of the configuration content to other files.
+
+- We will put all variable declarations in a separate file
+- And provide non default values to each of them
+1. Create a new file and name it variables.tf
+1. Copy all the variable declarations into the new file.
+1. Create another file, name it terraform.tfvars
+1. Set values for each of the variables.
+
+We have these files now
+
+main.tf
+![main.tf file](file:./main.tf)
