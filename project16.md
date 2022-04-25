@@ -193,3 +193,36 @@ Therefore, each time Terraform goes into a loop to create a subnet, it must be c
 But we still have a problem. If we run Terraform with this configuration, it may succeed for the first time, but by the time it goes into the second loop, it will fail because we still have cidr_block hard coded. The same cidr_block cannot be created twice within the same VPC. So, we have a little more work to do.
 
 
+### **Let’s make cidr_block dynamic.** ###
+We will introduce a function cidrsubnet() to make this happen. It accepts 3 parameters. Let us use it first by updating the configuration, then we will explore its internals
+
+~~~
+    # Create public subnet1
+ resource "aws_subnet" "public" { 
+     count                   = 2
+     vpc_id                  = aws_vpc.PRJ16-vpc.id
+     cidr_block              = cidrsubnet(var.vpc_cidr, 8 , count.index)
+     map_public_ip_on_launch = true
+     availability_zone       = data.aws_availability_zones.available.names[count.index]
+
+ }
+ ~~~
+ 
+ A closer look at cidrsubnet – this function works like an algorithm to dynamically create a subnet CIDR per AZ. Regardless of the number of subnets created, it takes care of the cidr value per subnet.
+
+Its parameters are cidrsubnet(prefix, newbits, netnum)
+
+The prefix parameter must be given in CIDR notation, same as for VPC.
+The newbits parameter is the number of additional bits with which to extend the prefix. For example, if given a prefix ending with /16 and a newbits value of 8, the resulting subnet address will have length /24
+The netnum parameter is a whole number that can be represented as a binary integer with no more than newbits binary digits, which will be used to populate the additional bits added to the prefix
+
+We can test this on terraform console thus:
+- On the terminal, run terraform console
+- type cidrsubnet("172.16.0.0/16", 8, 0)
+- Hit enter
+- See the output
+- Keep change the numbers and see what happens.
+- To get out of the console, type exit
+ 
+See result below:
+![](terraform-cidr-subnet.jpg)
