@@ -347,5 +347,11 @@ Instead of havng a long lisf of variables in main.tf file, we can actually make 
 
 We have these files now
 
-main.tf
-![main.tf file](file:./main.tf)
+**main.tf**
+![main.tf file](./main.tf)
+
+**terraform.tfvars**
+![terafform.tfvars file](./terraform.tfvars)
+
+**variables.tf**
+![variables.tf file](./variables.tf)
