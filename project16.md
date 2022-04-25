@@ -360,4 +360,4 @@ If we pass *null* value to the preferred_number_of_public_subnets variable, terr
 
 ![](preferred_number_of_public_subnets_variable_null.jpg)
 
-![](preferred_number_of_public_subnets variable_null.jpg)
+**Note that there are 7 resources to be added, one PVC and six Subnets**
