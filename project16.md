@@ -49,7 +49,7 @@ provider "aws" {
 }
 
 # Create VPC
-resource "aws_vpc" "main" {
+resource "aws_vpc" "PRJ16-vpc" {
   cidr_block                     = "172.16.0.0/16"
   enable_dns_support             = "true"
   enable_dns_hostnames           = "true"
@@ -65,3 +65,37 @@ sudo terraform init
 This downloads all required terraform plugins for the selected provider (aws in this case) and provisioner
 
 ![](terraform-init.jpg)
+
+Then run
+~~~
+sudo terraform plan
+~~~
+This will displan what the main.tf file will produce as output in our specified region
+
+If satisfied with the output, run
+~~~
+sudo terraform apply
+~~~
+to build the infrastructure described in the main.tf file
+
+### Let us create the first 2 public subnets. ###
+Add below to the main.tf file
+
+~~~
+# Create public subnets1
+    resource "aws_subnet" "public1" {
+    vpc_id                     = aws_vpc.PRJ16-vpc.id
+    cidr_block                 = "172.16.0.0/24"
+    map_public_ip_on_launch    = true
+    availability_zone          = "us-east-1a"
+
+}
+
+# Create public subnet2
+    resource "aws_subnet" "public2" {
+    vpc_id                     = aws_vpc.PRJ16-vpc.id
+    cidr_block                 = "172.16.1.0/24"
+    map_public_ip_on_launch    = true
+    availability_zone          = "us-east-1b"
+}
+~~~
