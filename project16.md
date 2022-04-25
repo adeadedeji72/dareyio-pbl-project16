@@ -355,3 +355,6 @@ We have these files now
 
 **variables.tf**
 ![variables.tf file](./variables.tf)
+
+If we pass *null* value to the preferred_number_of_public_subnets variable, terraform will create a number of subnets that is equal to the number of AZs in our rgion, in this case (us-east-1), six (us-east-1a to us-east-1f).
+![](preferred_number_of_public_subnets variable_null.jpg)
